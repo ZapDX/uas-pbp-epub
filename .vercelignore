@@ -1,0 +1,26 @@
+# Abaikan file sistem dan git
+.git
+.env
+.env.example
+.gitignore
+README.md
+
+# Abaikan dependensi Node.js (karena sudah di-build jadi CSS/JS)
+node_modules
+package-lock.json
+package.json
+vite.config.js
+tailwind.config.js
+postcss.config.js
+
+# Abaikan file testing
+tests
+phpunit.xml
+
+# Abaikan file sampah/besar
+*.exe
+*.zip
+*.tar.gz
+*.log
+storage/*.epub
+storage/app/public/*.epub
