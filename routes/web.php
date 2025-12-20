@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -86,9 +87,14 @@ Route::get('/dashboard', function (Request $request) {
 
     $books = $query->get();
     $categories = Category::all();
-
+    
     return view('dashboard', compact('books', 'categories'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Route Khusus untuk membersihkan cache di Vercel
+Route::get('/bersih-bersih', function() {
+    $exitCode = Artisan::call('optimize:clear');
+    return '<h1>Cache berhasil dibersihkan!</h1> <br> Output: ' . Artisan::output();
+});
 
 require __DIR__.'/auth.php';
