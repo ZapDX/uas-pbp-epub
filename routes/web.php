@@ -8,6 +8,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -91,10 +92,24 @@ Route::get('/dashboard', function (Request $request) {
     return view('dashboard', compact('books', 'categories'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Route Khusus untuk membersihkan cache di Vercel
 Route::get('/bersih-bersih', function() {
-    $exitCode = Artisan::call('optimize:clear');
-    return '<h1>Cache berhasil dibersihkan!</h1> <br> Output: ' . Artisan::output();
+    // 1. Bersihkan Cache
+    Artisan::call('optimize:clear');
+    
+    // 2. Cek File apa yang sebenarnya ada di folder build/assets
+    $path = public_path('build/assets');
+    $files = is_dir($path) ? scandir($path) : ['Folder tidak ditemukan!'];
+    
+    // 3. Baca isi "Peta" (Manifest.json) yang dipakai Laravel
+    $manifestPath = public_path('build/manifest.json');
+    $manifestContent = file_exists($manifestPath) ? file_get_contents($manifestPath) : 'File Manifest hilang!';
+
+    return response()->json([
+        'status' => 'Cache cleared!',
+        'files_on_server' => $files, // Ini file yang NYATA ada
+        'manifest_content' => json_decode($manifestContent), // Ini yang DIPIKIR Laravel ada
+        'laravel_path' => public_path(''),
+    ]);
 });
 
 require __DIR__.'/auth.php';
